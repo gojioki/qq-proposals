@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>施策② モバイルFV最適化</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #f0ede8;
+    --surface: #ffffff;
+    --border: #e0ddd8;
+    --text: #1a1a1a;
+    --muted: #888880;
+    --red: #e53b3b;
+    --green: #1a9455;
+    --accent: #2d6ef0;
+    --orange: #e07a20;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 48px 32px;
+  }
+
+  .wrapper { max-width: 960px; margin: 0 auto; }
+
+  .page-title {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .page-title .label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+  }
+  .page-title h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.02em; }
+  .page-title .subtitle { font-size: 14px; color: var(--muted); margin-top: 8px; }
+
+  /* 根拠バー */
+  .evidence-bar {
+    background: var(--text);
+    color: #fff;
+    border-radius: 12px;
+    padding: 18px 28px;
+    margin-bottom: 36px;
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .ev-item { text-align: center; }
+  .ev-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 28px; font-weight: 800;
+    line-height: 1;
+  }
+  .ev-num.red { color: #ff6b6b; }
+  .ev-num.orange { color: #ffb347; }
+  .ev-num.blue { color: #7eb3ff; }
+  .ev-label { font-size: 11px; opacity: 0.65; margin-top: 4px; }
+  .ev-divider { width: 1px; height: 36px; background: rgba(255,255,255,0.15); }
+
+  /* 比較グリッド */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 72px 1fr;
+    gap: 0;
+    align-items: start;
+    margin-bottom: 40px;
+  }
+
+  .arrow-col {
+    display: flex; align-items: flex-start;
+    justify-content: center; padding-top: 140px;
+  }
+  .arrow {
+    width: 44px; height: 44px;
+    background: var(--text); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 18px;
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+  }
+
+  .card-header {
+    padding: 14px 20px 12px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .badge {
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px; letter-spacing: 0.04em;
+  }
+  .badge-before { background: #fef0f0; color: var(--red); }
+  .badge-after { background: #edf7f2; color: var(--green); }
+  .card-title { font-size: 14px; font-weight: 700; }
+
+  /* スマホフレーム */
+  .phone-frame {
+    margin: 20px auto;
+    width: 240px;
+    background: #1a1a1a;
+    border-radius: 34px;
+    padding: 10px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+  }
+  .phone-screen {
+    background: #fff;
+    border-radius: 26px;
+    overflow: hidden;
+  }
+  .phone-notch {
+    background: #1a1a1a; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .phone-notch::after {
+    content: ''; width: 56px; height: 7px;
+    background: #333; border-radius: 4px;
+  }
+
+  /* ナビ */
+  .mock-nav {
+    background: #fff; padding: 9px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .mock-logo { font-size: 10px; font-weight: 900; color: #1a6ef0; }
+  .mock-menu { display: flex; flex-direction: column; gap: 3px; }
+  .mock-menu span { display: block; width: 16px; height: 2px; background: #333; border-radius: 1px; }
+
+  /* BEFORE：バナー主役 */
+  .fv-before-banner {
+    background: linear-gradient(135deg, #ff6600 0%, #cc3300 100%);
+    padding: 20px 12px 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .fv-before-banner::before {
+    content: ''; position: absolute;
+    top: -15px; right: -15px;
+    width: 70px; height: 70px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  .banner-campaign-label {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: #fff; font-size: 8px; font-weight: 700;
+    padding: 2px 8px; border-radius: 3px; margin-bottom: 6px;
+  }
+  .banner-big {
+    color: #fff; font-size: 26px; font-weight: 900;
+    line-height: 1; margin-bottom: 4px;
+  }
+  .banner-big span { font-size: 14px; }
+  .banner-sub { color: rgba(255,255,255,0.75); font-size: 8px; margin-bottom: 12px; }
+  .banner-cta-small {
+    background: rgba(255,255,255,0.2);
+    color: #fff; font-size: 9px; font-weight: 700;
+    padding: 6px 12px; border-radius: 5px;
+    display: inline-block;
+  }
+
+  .fv-before-text {
+    padding: 10px 12px;
+    background: #f8f8f8;
+    border-bottom: 1px solid #eee;
+  }
+  .fv-before-text p {
+    font-size: 8px; color: #666; text-align: center; line-height: 1.5; margin-bottom: 6px;
+  }
+  .cta-buried {
+    background: linear-gradient(135deg, #ff7a00, #ff5500);
+    color: #fff; font-size: 10px; font-weight: 700;
+    padding: 9px; text-align: center; border-radius: 6px;
+  }
+
+  /* 問題マーカー */
+  .problem-marker {
+    position: relative;
+    display: inline-block;
+  }
+  .marker-line {
+    position: absolute;
+    top: 0; left: -8px; bottom: 0;
+    width: 3px;
+    background: var(--red);
+    border-radius: 2px;
+  }
+
+  /* AFTER：CTA主役 */
+  .fv-after {
+    padding: 12px 12px 8px;
+    background: #fff;
+  }
+
+  .trust-badges {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .trust-badge {
+    background: #f0f4ff;
+    color: #2d6ef0;
+    font-size: 7px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .fv-catch {
+    font-size: 11px; font-weight: 900;
+    line-height: 1.4; margin-bottom: 4px;
+    color: #1a1a1a;
+  }
+  .fv-catch span { color: #2d6ef0; }
+
+  .fv-sub {
+    font-size: 8px; color: #888;
+    margin-bottom: 10px; line-height: 1.5;
+  }
+
+  .after-campaign-strip {
+    background: #fff3e0;
+    border-radius: 5px;
+    padding: 5px 8px;
+    font-size: 8px;
+    color: #e07a20;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .step-block {
+    margin-bottom: 6px; border-radius: 7px;
+    overflow: hidden; border: 1.5px solid #e8e8e8;
+  }
+  .step-block.s1 { border-color: rgba(255,85,0,0.3); }
+  .step-block.s2 { border-color: rgba(45,110,240,0.3); }
+
+  .step-hd {
+    padding: 5px 8px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .step-block.s1 .step-hd { background: #fff5ef; }
+  .step-block.s2 .step-hd { background: #eef3ff; }
+
+  .snum {
+    font-size: 8px; font-weight: 800;
+    padding: 1px 5px; border-radius: 3px;
+  }
+  .step-block.s1 .snum { background: #ff5500; color: #fff; }
+  .step-block.s2 .snum { background: #2d6ef0; color: #fff; }
+
+  .sdesc { font-size: 8px; color: #555; line-height: 1.3; }
+  .sdesc strong { display: block; font-weight: 700; font-size: 9px; color: #222; }
+
+  .sbtn {
+    display: block; width: calc(100% - 12px);
+    margin: 5px 6px 6px;
+    padding: 7px 0; font-size: 9px; font-weight: 700;
+    text-align: center; border-radius: 5px; border: none;
+  }
+  .step-block.s1 .sbtn {
+    background: linear-gradient(135deg, #ff7a00, #ff5500);
+    color: #fff;
+  }
+  .step-block.s2 .sbtn {
+    background: #fff; color: #2d6ef0;
+    border: 1.5px solid #2d6ef0;
+  }
+
+  /* ノート */
+  .note {
+    border-radius: 8px; padding: 10px 14px;
+    margin: 14px 20px; font-size: 12px;
+    line-height: 1.6;
+  }
+  .note.red { background: #fef0f0; color: var(--red); }
+  .note.green { background: #edf7f2; color: var(--green); }
+  .note.red::before { content: '❌ '; }
+  .note.green::before { content: '✅ '; }
+
+  .data-row {
+    display: flex; align-items: center;
+    gap: 12px; padding: 12px 20px 20px;
+  }
+  .data-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 26px; font-weight: 800; line-height: 1;
+    flex-shrink: 0;
+  }
+  .data-num.red { color: var(--red); }
+  .data-num.green { color: var(--green); }
+  .data-desc { font-size: 12px; color: #666; line-height: 1.5; }
+
+  /* ポイント詳細 */
+  .detail-section {
+    background: var(--surface);
+    border-radius: 16px; padding: 28px 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+  }
+  .detail-section h3 {
+    font-size: 16px; font-weight: 800;
+    margin-bottom: 20px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .checklist {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .checklist li {
+    background: var(--bg);
+    border-radius: 8px; padding: 12px 14px;
+    font-size: 13px; line-height: 1.6;
+    padding-left: 36px; position: relative;
+  }
+  .checklist li::before {
+    content: attr(data-icon);
+    position: absolute; left: 12px; top: 12px;
+    font-size: 14px;
+  }
+  .checklist li strong { display: block; font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+  .checklist li span { font-size: 12px; color: var(--muted); }
+
+  /* 3パターン */
+  .pattern-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .pcard {
+    border-radius: 10px; border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .pcard-head {
+    padding: 10px 14px;
+    font-size: 12px; font-weight: 700;
+  }
+  .pcard.rec .pcard-head { background: #edf7f2; color: var(--green); }
+  .pcard.opt .pcard-head { background: var(--bg); color: var(--muted); }
+  .pcard-body {
+    padding: 12px 14px;
+    font-size: 12px; color: var(--muted);
+    line-height: 1.7; background: #fff;
+  }
+
+  /* KPIまとめ */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .kpi-card {
+    background: var(--bg); border-radius: 10px;
+    padding: 16px 18px; text-align: center;
+  }
+  .kpi-n {
+    font-family: 'Inter', sans-serif;
+    font-size: 28px; font-weight: 800; line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-n.orange { color: var(--orange); }
+  .kpi-l { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .kpi-d { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  @media (max-width: 640px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .arrow-col { padding-top: 0; padding: 16px 0; }
+    .checklist { grid-template-columns: 1fr; }
+    .pattern-row { grid-template-columns: 1fr; }
+    .kpi-row { grid-template-columns: 1fr; }
+    .evidence-bar { gap: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="page-title">
+    <div class="label">施策② ビフォーアフター</div>
+    <h1>モバイルFVの最適化</h1>
+    <div class="subtitle">「キャンペーンバナー主役」から「CTA主役」の構成へ</div>
+  </div>
+
+  <!-- 根拠バー -->
+  <div class="evidence-bar">
+    <div class="ev-item">
+      <div class="ev-num red">62.8%</div>
+      <div class="ev-label">訪問者のモバイル比率（SC）</div>
+    </div>
+    <div class="ev-divider"></div>
+    <div class="ev-item">
+      <div class="ev-num orange">37%</div>
+      <div class="ev-label">FV（スクロール5%）での離脱率</div>
+    </div>
+    <div class="ev-divider"></div>
+    <div class="ev-item">
+      <div class="ev-num blue">6分6秒</div>
+      <div class="ev-label">FV付近の平均滞在時間（迷いのサイン）</div>
+    </div>
+  </div>
+
+  <!-- 比較 -->
+  <div class="compare-grid">
+
+    <!-- BEFORE -->
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <span class="badge badge-before">BEFORE</span>
+          <span class="card-title">現在：バナー主役の構成</span>
+        </div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="mock-nav">
+              <div class="mock-logo">QQEnglish</div>
+              <div class="mock-menu"><span></span><span></span><span></span></div>
+            </div>
+            <!-- バナーが主役 -->
+            <div class="fv-before-banner">
+              <div class="banner-campaign-label">5月限定キャンペーン</div>
+              <div class="banner-big">15<span>%OFF</span></div>
+              <div class="banner-sub">2週間以上留学 / 6月30日まで</div>
+              <div class="banner-cta-small">説明会に参加する →</div>
+            </div>
+            <!-- CTAが埋もれている -->
+            <div class="fv-before-text">
+              <p>まずは情報収集！<br>留学の基礎やQQのことをもっと知りたい方</p>
+              <div class="cta-buried">📋 説明会に参加する</div>
+            </div>
+          </div>
+        </div>
+        <div class="note red">バナーが画面の大半を占め、CTAが下に追いやられている。ユーザーは「何をすればいいか」がわからず迷う。</div>
+        <div class="data-row">
+          <div class="data-num red">37%</div>
+          <div class="data-desc">FV時点での離脱率。<br>100人来て37人がここで去る。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 矢印 -->
+    <div class="arrow-col">
+      <div class="arrow">→</div>
+    </div>
+
+    <!-- AFTER -->
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <span class="badge badge-after">AFTER</span>
+          <span class="card-title">改善案：CTA主役の構成</span>
+        </div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="mock-nav">
+              <div class="mock-logo">QQEnglish</div>
+              <div class="mock-menu"><span></span><span></span><span></span></div>
+            </div>
+            <div class="fv-after">
+              <!-- 安心バッジ -->
+              <div class="trust-badges">
+                <span class="trust-badge">✓ 英語ゼロOK</span>
+                <span class="trust-badge">✓ 日本人常駐</span>
+                <span class="trust-badge">✓ 1日から参加</span>
+                <span class="trust-badge">✓ 業界最安値</span>
+                <span class="trust-badge">✓ 無料説明会</span>
+              </div>
+              <!-- キャッチ -->
+              <div class="fv-catch">セブ島で<span>英語が変わる</span>。<br>まず、話を聞いてみませんか？</div>
+              <div class="fv-sub">フィリピン留学No.1の日系スクール<br>1ヶ月 約22万円〜 / 週6回説明会開催中</div>
+              <!-- キャンペーン（テキストで簡潔に） -->
+              <div class="after-campaign-strip">🎁 5月申込限定：留学費用 最大15%OFF（6/30まで）</div>
+              <!-- 2ボタン -->
+              <div class="step-block s1">
+                <div class="step-hd">
+                  <span class="snum">STEP 1</span>
+                  <div class="sdesc"><strong>まずは無料説明会へ</strong>迷っている・情報収集したい方</div>
+                </div>
+                <button class="sbtn">📋 無料説明会に参加する</button>
+              </div>
+              <div class="step-block s2">
+                <div class="step-hd">
+                  <span class="snum">STEP 2</span>
+                  <div class="sdesc"><strong>個別に相談したい方へ</strong>費用・プランを詳しく話したい</div>
+                </div>
+                <button class="sbtn">👥 個別相談会を予約する</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="note green">CTAが画面の中心に。安心情報5点をFV最上部に配置し、初めて来たユーザーの不安を一瞬で解消。キャンペーンはテキストで簡潔に。</div>
+        <div class="data-row">
+          <div class="data-num green">↓目標</div>
+          <div class="data-desc">FV離脱率を37%→25%以下へ。<br>+20〜40件/月のCV増加を想定。</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 追加ポイント詳細 -->
+  <div class="detail-section">
+    <h3>改善の4つのポイント</h3>
+    <ul class="checklist">
+      <li data-icon="🛡️">
+        <strong>安心情報5点をFV最上部に</strong>
+        <span>「英語ゼロOK・日本人常駐・1日から参加可・業界最安値・無料説明会」。初来訪ユーザーの不安を視覚的に即解消。</span>
+      </li>
+      <li data-icon="💰">
+        <strong>費用概算をFV付近に表示</strong>
+        <span>「1ヶ月 約22万円〜」をキャッチコピー付近に表示。現在は中盤に埋まっており、20%以下のユーザーしか見ていない。</span>
+      </li>
+      <li data-icon="🎁">
+        <strong>キャンペーンをバナーからテキストへ</strong>
+        <span>大きなバナー画像をやめ、1行テキストで簡潔に表示。CTAへの視線誘導を妨げない形に変更。</span>
+      </li>
+      <li data-icon="📱">
+        <strong>CTAを画面の中心に配置</strong>
+        <span>2ボタン構成（施策①）をFVの主役に。スクロールしなくても押せる位置に両CTAを配置する。</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- FVビジュアル方向性 -->
+  <div class="detail-section">
+    <h3>FVビジュアルの方向性（3パターン案）</h3>
+    <div class="pattern-row">
+      <div class="pcard opt">
+        <div class="pcard-head">パターンA：数字訴求型</div>
+        <div class="pcard-body">「創業〇年・累計〇万人・満足度〇%」を大きく打ち出す。信頼性を数字で即伝達。素材が揃っていれば最も実施しやすい。</div>
+      </div>
+      <div class="pcard rec">
+        <div class="pcard-head">⭐ パターンB：人物訴求型（推奨）</div>
+        <div class="pcard-body">実際の留学生の笑顔写真＋短い体験談一言。「3ヶ月で英語が話せるようになりました」など。共感を呼びやすくCV率改善が期待できる。</div>
+      </div>
+      <div class="pcard opt">
+        <div class="pcard-head">パターンC：動画型</div>
+        <div class="pcard-body">校舎・授業風景の短い動画をFVに。Clarityでビデオへのクリックが一定数あり、関心があることの裏付けあり。実施コストは最も高い。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="detail-section" style="margin-bottom:0">
+    <h3>この施策で期待できる効果</h3>
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-n orange">▼12%</div>
+        <div class="kpi-l">FV離脱率の改善目標</div>
+        <div class="kpi-d">現状37%→25%以下。モバイル訪問者の母数が大きいため、わずかな改善でも絶対数は大きい。</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-n orange">+20〜<br>40件</div>
+        <div class="kpi-l">想定CV増加数/月</div>
+        <div class="kpi-d">月間PV約1,576×改善分12%×CTAへの到達率20%を基準とした試算。</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-n orange">63%</div>
+        <div class="kpi-l">対象ユーザーの割合</div>
+        <div class="kpi-d">訪問者の62.8%がモバイルユーザー。最大母数への改善施策として費用対効果が高い。</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

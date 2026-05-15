@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QQEnglish トップページ改善モックアップ</title>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+  min-height: 100vh;
+  padding: 24px 0 60px;
+}
+.page-note {
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 16px;
+  letter-spacing: 0.04em;
+}
+.phone {
+  width: 390px;
+  margin: 0 auto;
+  background: #e8eaed;
+  border-radius: 48px;
+  padding: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.1);
+}
+.screen {
+  background: #fff;
+  border-radius: 36px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+
+/* ヘッダー */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 0.5px solid #e5e5e5;
+  background: #fff;
+}
+.logo { font-size: 16px; font-weight: 600; color: #222; }
+.logo span { color: #185FA5; }
+.menu-icon { font-size: 22px; color: #555; }
+
+/* ナビバー */
+.navbar { background: #185FA5; display: flex; }
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 4px 10px;
+  border-right: 0.5px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+  gap: 5px;
+  transition: background 0.15s;
+}
+.nav-item:last-child { border-right: none; }
+.nav-item:active { background: rgba(255,255,255,0.1); }
+.nav-item .ntxt { font-size: 13px; color: #fff; font-weight: 600; }
+.nav-item .narr { font-size: 9px; color: rgba(255,255,255,0.6); }
+.nav-item.highlight { background: rgba(255,255,255,0.15); }
+.nav-item.highlight .ntxt { color: #FFD700; }
+.nav-item.highlight .narr { color: rgba(255,215,0,0.7); }
+
+/* ティッカー */
+.ticker-wrap {
+  background: #dceefb;
+  padding: 7px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-track {
+  display: inline-block;
+  animation: ticker 20s linear infinite;
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #185FA5;
+  padding: 0 18px;
+}
+.ticker-item i { font-size: 13px; }
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* FVバナー */
+.fv-img {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(160deg, #0d2d4a 0%, #185FA5 60%, #2a7fc9 100%);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 22px 20px;
+}
+.fv-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.fv-catch {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.55;
+  margin-bottom: 12px;
+}
+.fv-catch em {
+  font-style: normal;
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+.fv-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.7;
+}
+.fv-note {
+  position: absolute;
+  bottom: 10px; right: 12px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.25);
+}
+
+/* キャンペーンバー */
+.campaign-bar {
+  background: #fffbea;
+  padding: 9px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 0.5px solid #e5e5e5;
+}
+.campaign-badge {
+  font-size: 10px;
+  background: #ffc107;
+  color: #5a3a00;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.campaign-text { font-size: 12px; font-weight: 600; color: #856404; }
+
+/* FV CTA */
+.cta-fv {
+  padding: 18px 18px 22px;
+  border-bottom: 0.5px solid #e5e5e5;
+}
+.btn-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  background: #185FA5;
+  color: #fff;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: background 0.15s, transform 0.1s;
+}
+.btn-main:active { background: #134d8a; transform: scale(0.99); }
+.btn-main i { font-size: 18px; }
+.micro {
+  font-size: 11px;
+  color: #999;
+  text-align: center;
+  margin-bottom: 2px;
+}
+.btn-txt-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+.btn-txt {
+  font-size: 13px;
+  color: #555;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.btn-txt-wrap i { font-size: 14px; color: #999; }
+
+/* セクション */
+.section {
+  padding: 22px 18px;
+  border-bottom: 0.5px solid #e5e5e5;
+}
+.sec-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #aaa;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.sec-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 16px;
+}
+
+/* キャンペーンカード */
+.scroll-wrap {
+  overflow-x: auto;
+  padding: 10px 18px 16px;
+  scrollbar-width: none;
+  display: flex;
+  gap: 10px;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-wrap::-webkit-scrollbar { display: none; }
+.camp-card {
+  flex: 0 0 215px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 0.5px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.camp-head {
+  padding: 14px 14px 12px;
+  min-height: 105px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+.camp-deco {
+  position: absolute;
+  right: -12px; top: -12px;
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+.camp-deco2 {
+  position: absolute;
+  right: 22px; bottom: -18px;
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+.c1 { background: #c0392b; }
+.c2 { background: linear-gradient(135deg,#e67e22,#e74c3c); }
+.c3 { background: linear-gradient(135deg,#1a9c6e,#27ae60); }
+.c4 { background: #185FA5; }
+.camp-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  width: fit-content;
+}
+.tag-red   { background: #fff; color: #c0392b; }
+.tag-white { background: rgba(255,255,255,0.25); color: #fff; }
+.tag-yellow{ background: #FFD700; color: #1a3a10; }
+.camp-num  { font-size: 38px; font-weight: 700; color: #FFD700; line-height: 1; }
+.camp-unit { font-size: 15px; font-weight: 700; color: #FFD700; }
+.camp-title{ font-size: 15px; font-weight: 700; color: #fff; line-height: 1.4; }
+.camp-sub  { font-size: 10px; color: rgba(255,255,255,0.8); margin-top: 4px; }
+.camp-badges { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+.camp-badge  { font-size: 10px; font-weight: 600; background: rgba(255,255,255,0.2); color: #fff; padding: 2px 7px; border-radius: 20px; }
+.camp-footer {
+  padding: 10px 12px;
+  background: #fff;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+.camp-footer-text { font-size: 11px; color: #666; line-height: 1.5; }
+.camp-footer-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  transition: opacity 0.15s;
+}
+.camp-footer-btn:active { opacity: 0.85; }
+
+.dot-wrap { display: flex; justify-content: center; gap: 6px; padding: 0 0 6px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #ddd; }
+.dot.active { background: #185FA5; }
+
+/* 比較表 */
+.tbl { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+.tbl th {
+  padding: 9px 6px;
+  font-weight: 700;
+  font-size: 11px;
+  text-align: center;
+  border-bottom: 0.5px solid #e5e5e5;
+}
+.tbl td {
+  padding: 10px 6px;
+  text-align: center;
+  border-bottom: 0.5px solid #f0f0f0;
+  color: #222;
+  vertical-align: middle;
+}
+.tbl td:first-child { text-align: left; color: #888; font-size: 11px; padding-left: 0; }
+.tbl tr:last-child td { border-bottom: none; }
+.col-hl { background: #dceefb; color: #0c447c; font-weight: 600; }
+.th-hl  { background: #dceefb; color: #0c447c; }
+.num-good { font-size: 13px; font-weight: 700; color: #185FA5; }
+.num-mid  { font-size: 12px; color: #aaa; }
+.rec-badge {
+  font-size: 10px; font-weight: 700;
+  background: #185FA5; color: #fff;
+  padding: 2px 6px; border-radius: 4px;
+  margin-left: 4px; vertical-align: middle;
+}
+.arrow-sec {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: #f7f8fa;
+}
+.arrow-txt { font-size: 11px; color: #888; }
+
+/* シミュレーション */
+.tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.tab {
+  font-size: 12px; font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab.active { background: #185FA5; color: #fff; border-color: #185FA5; }
+.sim-card {
+  background: #f7f8fa;
+  border-radius: 14px;
+  padding: 16px;
+  border: 0.5px solid #e5e5e5;
+}
+.cost-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
+.cost-num { font-size: 32px; font-weight: 700; color: #185FA5; }
+.cost-unit { font-size: 14px; color: #888; }
+.tagline {
+  font-size: 12px; color: #666;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 0.5px solid #e5e5e5;
+}
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 0.5px solid #f0f0f0;
+}
+.detail-row:last-child { border-bottom: none; }
+.dlabel { color: #888; }
+.dval   { font-weight: 700; color: #222; }
+.outcome {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #dceefb;
+  border-radius: 10px;
+  font-size: 12px;
+  color: #185FA5;
+  font-weight: 700;
+}
+.sim-hint { font-size: 11px; color: #bbb; text-align: center; margin-top: 12px; }
+
+/* 中間CTA */
+.mid-cta {
+  padding: 24px 18px 28px;
+  background: #f7f8fa;
+  border-top: 0.5px solid #e5e5e5;
+}
+.mid-title {
+  font-size: 15px; font-weight: 700;
+  color: #222;
+  text-align: center;
+  margin-bottom: 4px;
+}
+.mid-sub {
+  font-size: 12px; color: #888;
+  text-align: center;
+  margin-bottom: 16px;
+}
+</style>
+</head>
+<body>
+
+<div class="page-note">※ トップページ改善モックアップ（提案資料用）</div>
+
+<div class="phone">
+  <div class="screen">
+
+    <!-- ヘッダー -->
+    <div class="header">
+      <div class="logo"><span>QQ</span> English</div>
+      <span class="menu-icon" style="font-size:20px;line-height:1;">☰</span>
+    </div>
+
+    <!-- ナビバー（改善版：アイコン削除・料金プラン左・▼あり） -->
+    <div class="navbar">
+      <div class="nav-item highlight">
+        <span class="ntxt">料金プラン</span>
+        <span class="narr">▼</span>
+      </div>
+      <div class="nav-item">
+        <span class="ntxt">学校案内</span>
+        <span class="narr">▼</span>
+      </div>
+      <div class="nav-item">
+        <span class="ntxt">施設</span>
+        <span class="narr">▼</span>
+      </div>
+      <div class="nav-item">
+        <span class="ntxt">体験談</span>
+        <span class="narr">▼</span>
+      </div>
+    </div>
+
+    <!-- 安心情報ティッカー -->
+    <div class="ticker-wrap">
+      <div class="ticker-track">
+        <span class="ticker-item">✅ 英語ゼロOK</span>
+        <span class="ticker-item">✅ 日本人常駐25名</span>
+        <span class="ticker-item">✅ 1日から参加</span>
+        <span class="ticker-item">✅ 業界最安値水準</span>
+        <span class="ticker-item">✅ 無料説明会あり</span>
+        <span class="ticker-item">✅ 英語ゼロOK</span>
+        <span class="ticker-item">✅ 日本人常駐25名</span>
+        <span class="ticker-item">✅ 1日から参加</span>
+        <span class="ticker-item">✅ 業界最安値水準</span>
+        <span class="ticker-item">✅ 無料説明会あり</span>
+      </div>
+    </div>
+
+    <!-- FVバナー -->
+    <div class="fv-img">
+      <div class="fv-label">フィリピン・セブ島留学</div>
+      <div class="fv-catch">ロンドンの<em>3分の1の費用</em>で、<br><em>3倍の授業</em>を受ける。</div>
+      <div class="fv-sub">フィリピン留学No.1日系スクール<br>1ヶ月 約22万円〜 ／ 週6回無料説明会</div>
+      <div class="fv-note">※ここに実写バナー画像</div>
+    </div>
+
+    <!-- キャンペーンバー -->
+    <div class="campaign-bar">
+      <span class="campaign-badge">🎁 5月限定</span>
+      <span class="campaign-text">2週間以上の留学で最大15%OFF → 6/30まで</span>
+    </div>
+
+    <!-- FV CTA -->
+    <div class="cta-fv">
+      <button class="btn-main">🖥️ 無料説明会に参加する</button>
+      <div class="micro">毎週火〜日開催・所要60分・参加無料</div>
+      <div class="btn-txt-wrap">
+        <span class="btn-txt">🧮 今すぐ料金を見積もる &rsaquo;</span>
+      </div>
+      <div class="micro">30秒でカンタン・その場でお見積り</div>
+    </div>
+
+    <!-- キャンペーンカード -->
+    <div style="padding:18px 18px 6px;">
+      <div class="sec-label">Campaign &amp; Seminar</div>
+      <div class="sec-title" style="margin-bottom:0;">キャンペーン・説明会情報</div>
+    </div>
+    <div class="scroll-wrap">
+      <div class="camp-card">
+        <div class="camp-head c1">
+          <div class="camp-deco"></div><div class="camp-deco2"></div>
+          <div><div class="camp-tag tag-red">5月でラスト！</div><div><span class="camp-num">15</span><span class="camp-unit">%OFF</span></div></div>
+          <div class="camp-sub">2週間以上の留学で適用</div>
+        </div>
+        <div class="camp-footer">
+          <div class="camp-footer-text">6月30日までに入校の方対象</div>
+          <button class="camp-footer-btn" style="background:#c0392b;">→ 今すぐチェック</button>
+        </div>
+      </div>
+      <div class="camp-card">
+        <div class="camp-head c2">
+          <div class="camp-deco"></div>
+          <div><div class="camp-tag tag-white">早割 5月31日まで</div><div class="camp-title">秋の留学<br>キャンペーン</div></div>
+          <div class="camp-badges"><span class="camp-badge">最大10%OFF</span><span class="camp-badge">入学金$150免除</span></div>
+        </div>
+        <div class="camp-footer">
+          <div class="camp-footer-text">留学期間：9月1日〜12月30日</div>
+          <button class="camp-footer-btn" style="background:#e67e22;">→ 今すぐチェック</button>
+        </div>
+      </div>
+      <div class="camp-card">
+        <div class="camp-head c3">
+          <div class="camp-deco"></div>
+          <div><div class="camp-tag tag-yellow">2026 キッズ夏キャンプ</div><div class="camp-title">英語で世界を<br>広げよう！</div></div>
+          <div class="camp-sub">小5〜高2対象　7/26〜8/22</div>
+        </div>
+        <div class="camp-footer">
+          <div class="camp-footer-text">14日間 310,000円〜</div>
+          <button class="camp-footer-btn" style="background:#27ae60;">→ 今すぐチェック</button>
+        </div>
+      </div>
+      <div class="camp-card">
+        <div class="camp-head c4">
+          <div class="camp-deco"></div>
+          <div><div class="camp-tag tag-white">毎週開催・参加無料</div><div class="camp-title">無料<br>説明会</div></div>
+          <div class="camp-badges"><span class="camp-badge">所要60分</span><span class="camp-badge">オンライン</span></div>
+        </div>
+        <div class="camp-footer">
+          <div class="camp-footer-text">火〜日 週6回開催<br>費用・期間・選び方をすべて解説</div>
+          <button class="camp-footer-btn" style="background:#185FA5;">🖥️ 説明会に申し込む</button>
+        </div>
+      </div>
+    </div>
+    <div class="dot-wrap">
+      <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+
+    <!-- 国別比較表 -->
+    <div class="section">
+      <div class="sec-label">Step 1</div>
+      <div class="sec-title">どの国で学ぶ？</div>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:30%;"></th>
+            <th class="th-hl" style="width:35%;"><span style="display:block;font-size:18px;margin-bottom:3px;">🇵🇭</span>フィリピン</th>
+            <th style="width:35%;color:#aaa;font-size:11px;"><span style="display:block;font-size:18px;margin-bottom:3px;">🇦🇺</span>オーストラリア</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>費用/月</td>
+            <td class="col-hl"><span class="num-good">◎ 25万円</span></td>
+            <td><span class="num-mid">△ 50万円</span></td>
+          </tr>
+          <tr>
+            <td>距離</td>
+            <td class="col-hl"><span class="num-good">◎ 5時間</span></td>
+            <td><span class="num-mid">△ 8時間</span></td>
+          </tr>
+          <tr>
+            <td>1日の授業</td>
+            <td class="col-hl"><span class="num-good">◎ 8コマ<br><span style="font-size:10px;font-weight:400;">マンツーマン</span></span></td>
+            <td><span class="num-mid">△ 3コマ<br><span style="font-size:10px;">グループ</span></span></td>
+          </tr>
+          <tr>
+            <td>月の英会話量</td>
+            <td class="col-hl"><span class="num-good">◎ 160h</span></td>
+            <td><span class="num-mid">△ 80h</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="arrow-sec">
+      <span style="font-size:16px;color:#bbb;">↓</span>
+      <span class="arrow-txt">フィリピンに決まったら、次はどの学校？</span>
+      <span style="font-size:16px;color:#bbb;">↓</span>
+    </div>
+
+    <!-- 学校別比較表 -->
+    <div class="section">
+      <div class="sec-label">Step 2</div>
+      <div class="sec-title">どの学校にする？</div>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:30%;"></th>
+            <th class="th-hl" style="width:35%;">QQ English<span class="rec-badge">推奨</span></th>
+            <th style="width:35%;color:#aaa;font-size:11px;">日系A校・<br>韓国系B校</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>料金/月</td>
+            <td class="col-hl"><span class="num-good">約22万円</span></td>
+            <td><span class="num-mid">23〜25万円</span></td>
+          </tr>
+          <tr>
+            <td>入学タイミング</td>
+            <td class="col-hl"><span class="num-good">◎ 毎日OK</span></td>
+            <td><span class="num-mid">△ 月曜のみ</span></td>
+          </tr>
+          <tr>
+            <td>マンツーマン</td>
+            <td class="col-hl"><span class="num-good">最大8コマ</span></td>
+            <td><span class="num-mid">4コマ</span></td>
+          </tr>
+          <tr>
+            <td>日本人スタッフ</td>
+            <td class="col-hl"><span class="num-good">常時25名</span></td>
+            <td><span class="num-mid">1〜2名</span></td>
+          </tr>
+          <tr>
+            <td>事前学習</td>
+            <td class="col-hl"><span class="num-good">無料16回</span></td>
+            <td><span class="num-mid">なし</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 費用シミュレーション -->
+    <div class="section">
+      <div class="sec-label">費用シミュレーション</div>
+      <div class="sec-title">どのくらい留学する？</div>
+      <div class="tabs">
+        <div class="tab" onclick="show('w1')">1週間</div>
+        <div class="tab active" onclick="show('m1')">1ヶ月</div>
+        <div class="tab" onclick="show('m3')">3ヶ月</div>
+        <div class="tab" onclick="show('m6')">6ヶ月</div>
+      </div>
+      <div id="w1" class="sim-card" style="display:none;">
+        <div class="cost-row"><span class="cost-num">8</span><span class="cost-unit">万円〜</span></div>
+        <div class="tagline">英語環境に慣れてモチベーションUP</div>
+        <div class="detail-row"><span class="dlabel">授業日数</span><span class="dval">5日間</span></div>
+        <div class="detail-row"><span class="dlabel">マンツーマン</span><span class="dval">最大40コマ</span></div>
+        <div class="detail-row"><span class="dlabel">総英会話量</span><span class="dval">約40時間</span></div>
+        <div class="outcome">英語に慣れる体験ができる期間</div>
+      </div>
+      <div id="m1" class="sim-card">
+        <div class="cost-row"><span class="cost-num">22</span><span class="cost-unit">万円〜</span></div>
+        <div class="tagline">考えながら英語を話せるようになる</div>
+        <div class="detail-row"><span class="dlabel">授業日数</span><span class="dval">20日間</span></div>
+        <div class="detail-row"><span class="dlabel">マンツーマン</span><span class="dval">最大160コマ</span></div>
+        <div class="detail-row"><span class="dlabel">総英会話量</span><span class="dval">約160時間</span></div>
+        <div class="outcome">初心者が一番選ぶ、人気No.1プラン</div>
+      </div>
+      <div id="m3" class="sim-card" style="display:none;">
+        <div class="cost-row"><span class="cost-num">65</span><span class="cost-unit">万円〜</span></div>
+        <div class="tagline">英語で自然な会話ができるようになる</div>
+        <div class="detail-row"><span class="dlabel">授業日数</span><span class="dval">60日間</span></div>
+        <div class="detail-row"><span class="dlabel">マンツーマン</span><span class="dval">最大480コマ</span></div>
+        <div class="detail-row"><span class="dlabel">総英会話量</span><span class="dval">約480時間</span></div>
+        <div class="outcome">雑談が楽しくなるレベルに到達できる</div>
+      </div>
+      <div id="m6" class="sim-card" style="display:none;">
+        <div class="cost-row"><span class="cost-num">130</span><span class="cost-unit">万円〜</span></div>
+        <div class="tagline">日本語を介さず英語が話せるように</div>
+        <div class="detail-row"><span class="dlabel">授業日数</span><span class="dval">120日間</span></div>
+        <div class="detail-row"><span class="dlabel">マンツーマン</span><span class="dval">最大960コマ</span></div>
+        <div class="detail-row"><span class="dlabel">総英会話量</span><span class="dval">約960時間</span></div>
+        <div class="outcome">英語を"使いこなす"レベルに到達できる</div>
+      </div>
+      <div class="sim-hint">※1ドル＝145円計算。実際は為替レートにより変動します。</div>
+    </div>
+
+    <!-- 中間CTA -->
+    <div class="mid-cta">
+      <div class="mid-title">気になったら、まず動いてみましょう</div>
+      <div class="mid-sub">説明会は無料・オンラインで何度でも参加できます</div>
+      <button class="btn-main">🖥️ 無料説明会に申し込む（週6回開催）</button>
+      <div class="micro">毎週火〜日・所要60分・参加無料</div>
+      <div class="btn-txt-wrap" style="margin-top:4px;">
+        <span class="btn-txt">🧮 まず料金だけ確認する &rsaquo;</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function show(id) {
+  ['w1','m1','m3','m6'].forEach(function(k) {
+    document.getElementById(k).style.display = k === id ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(function(t, i) {
+    t.classList.toggle('active', ['w1','m1','m3','m6'][i] === id);
+  });
+}
+</script>
+</body>
+</html>
